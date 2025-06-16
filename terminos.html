@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos de Uso - MercadoVive</title>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --radius: 8px;
+            --shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--dark), #1a2530);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .disclaimer {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .last-update {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--light);
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background-color: #ffebee;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .contact-info {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-top: 30px;
+        }
+        
+        .contact-info h3 {
+            margin-top: 0;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .accept-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: var(--radius);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TÉRMINOS DE USO</h1>
+            <div class="subtitle">MercadoVive - Plataforma de Comercio Electrónico</div>
+        </header>
+        
+        <div class="last-update">Última actualización: 15 de octubre de 2025</div>
+        
+        <div class="disclaimer">
+            <strong>Importante:</strong> MercadoVive se encuentra actualmente en fase de prueba piloto. Estos términos aplican exclusivamente durante esta etapa experimental.
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>1. Aceptación de los Términos</h2>
+                <p>Al acceder y utilizar el sitio web MercadoVive ("el Servicio"), usted acepta cumplir y estar legalmente obligado por estos Términos de Uso ("Términos"). Si no está de acuerdo con cualquier parte de estos Términos, debe abstenerse de utilizar el Servicio.</p>
+                
+                <div class="highlight">
+                    <p>Este es un proyecto en fase piloto operado únicamente en Medellín, Colombia, como una versión de prueba (MVP - Producto Mínimo Viable).</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>2. Descripción del Servicio</h2>
+                <p>MercadoVive es una plataforma de comercio electrónico que conecta compradores con tiendas locales de abarrotes y productos de primera necesidad. Durante esta fase piloto:</p>
+                
+                <ul>
+                    <li>El servicio está disponible <strong>exclusivamente en Medellín, Colombia</strong>, y solo en barrios predefinidos.</li>
+                    <li>El catálogo de productos está limitado a un máximo de 30 productos iniciales.</li>
+                    <li>Todos los pedidos requieren <strong>confirmación manual</strong> por parte de nuestro equipo vía WhatsApp.</li>
+                    <li>Los precios mostrados pueden cambiar sin previo aviso.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>3. Registro y Cuentas de Usuario</h2>
+                
+                <h3>3.1 Requisitos para el Registro</h3>
+                <p>Para realizar pedidos a través de MercadoVive, deberá registrarse proporcionando información veraz y completa, que incluye:</p>
+                <ul>
+                    <li>Nombre completo</li>
+                    <li>Número de contacto válido (WhatsApp)</li>
+                    <li>Ubicación aproximada (barrio/comuna)</li>
+                </ul>
+                
+                <h3>3.2 Responsabilidad de la Cuenta</h3>
+                <p>Usted es responsable de:</p>
+                <ul>
+                    <li>Mantener la confidencialidad de sus credenciales de acceso</li>
+                    <li>Toda la actividad que ocurra bajo su cuenta</li>
+                    <li>Notificarnos inmediatamente sobre cualquier uso no autorizado de su cuenta</li>
+                </ul>
+                
+                <div class="warning">
+                    <p><strong>Limitación de usuarios:</strong> Durante la fase piloto, nos reservamos el derecho de limitar el registro de nuevos usuarios según nuestra capacidad operativa.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>4. Proceso de Compra y Entrega</h2>
+                
+                <h3>4.1 Realización de Pedidos</h3>
+                <p>Los pedidos realizados a través de la plataforma <strong>no son vinculantes</strong> hasta ser confirmados expresamente por nuestro equipo vía WhatsApp. Nos reservamos el derecho de cancelar cualquier pedido antes de su confirmación.</p>
+                
+                <h3>4.2 Precios y Disponibilidad</h3>
+                <p>Los precios mostrados están sujetos a cambio sin previo aviso. La disponibilidad de productos puede variar y no podemos garantizar que todos los productos mostrados estarán disponibles al momento de su pedido.</p>
+                
+                <h3>4.3 Métodos de Pago</h3>
+                <p>Durante la fase piloto <strong>no procesamos pagos en línea</strong>. Todas las transacciones se cerrarán mediante:</p>
+                <ul>
+                    <li>Pago contraentrega (efectivo)</li>
+                    <li>Transferencia bancaria previa confirmación del pedido</li>
+                </ul>
+                
+                <h3>4.4 Entregas</h3>
+                <p>Las entregas se realizarán en el barrio especificado durante el registro. Los tiempos de entrega son estimados y pueden variar según condiciones de tráfico y disponibilidad.</p>
+            </div>
+            
+            <div class="section">
+                <h2>5. Limitaciones Técnicas</h2>
+                <p>Durante esta fase piloto, usted reconoce y acepta que:</p>
+                
+                <ul>
+                    <li>Este es un sistema en desarrollo que puede experimentar interrupciones temporales</li>
+                    <li>Puede ocurrir pérdida ocasional de datos debido a la naturaleza experimental del proyecto</li>
+                    <li>Pueden presentarse errores de visualización o información incorrecta</li>
+                    <li>Los datos se almacenan localmente sin cifrado avanzado</li>
+                    <li>Nos reservamos el derecho de limitar el acceso sin previo aviso</li>
+                </ul>
+                
+                <div class="warning">
+                    <p><strong>Sin garantías:</strong> El servicio se proporciona "tal cual" y "según disponibilidad" sin garantías de ningún tipo, ya sean expresas o implícitas.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>6. Privacidad y Protección de Datos</h2>
+                
+                <h3>6.1 Datos Recopilados</h3>
+                <p>Durante la fase piloto, recopilamos únicamente:</p>
+                <ul>
+                    <li>Nombre completo</li>
+                    <li>Número de contacto</li>
+                    <li>Ubicación aproximada (barrio)</li>
+                </ul>
+                
+                <h3>6.2 Uso de la Información</h3>
+                <p>Estos datos se usan exclusivamente para:</p>
+                <ul>
+                    <li>Procesar y entregar sus pedidos</li>
+                    <li>Comunicarnos con usted sobre su pedido</li>
+                    <li>Mejorar nuestro servicio durante la fase piloto</li>
+                </ul>
+                
+                <h3>6.3 Compartir Información</h3>
+                <p><strong>No compartimos su información con terceros</strong>, excepto cuando sea necesario para completar su pedido (ej: información de entrega al repartidor).</p>
+                
+                <h3>6.4 Retención de Datos</h3>
+                <p>Todos los datos recopilados durante la fase piloto <strong>serán eliminados al finalizar esta etapa experimental</strong>.</p>
+            </div>
+            
+            <div class="section">
+                <h2>7. Responsabilidades y Limitaciones</h2>
+                <p>Usted acepta que MercadoVive <strong>no garantiza</strong>:</p>
+                
+                <ul>
+                    <li>Disponibilidad continua e ininterrumpida del servicio</li>
+                    <li>Exactitud de precios o disponibilidad de productos</li>
+                    <li>Tiempos de entrega exactos</li>
+                    <li>Calidad o estado de los productos entregados</li>
+                </ul>
+                
+                <p>En caso de fallas técnicas o discrepancias, su único recurso es solicitar reembolso directamente con la tienda o proveedor.</p>
+                
+                <div class="highlight">
+                    <p>MercadoVive actúa únicamente como intermediario entre compradores y tiendas locales. No somos responsables por la calidad, seguridad o autenticidad de los productos ofrecidos por las tiendas.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>8. Modificaciones a los Términos</h2>
+                <p>Nos reservamos el derecho de modificar estos Términos en cualquier momento durante la fase piloto. Las modificaciones entrarán en vigor inmediatamente después de su publicación en el sitio.</p>
+                
+                <p>El uso continuado del servicio constituye aceptación de los nuevos términos. Le recomendamos revisar periódicamente esta página para estar al tanto de cualquier cambio.</p>
+            </div>
+            
+            <div class="section">
+                <h2>9. Vigencia del Piloto</h2>
+                <p>Esta fase experimental estará activa hasta el <strong>30 de noviembre de 2025</strong>. Posteriormente:</p>
+                
+                <ul>
+                    <li>Todos los datos de usuarios serán eliminados de nuestros sistemas</li>
+                    <li>El servicio podría descontinuarse</li>
+                    <li>Podría relanzarse bajo nuevos términos comerciales</li>
+                </ul>
+                
+                <div class="warning">
+                    <p>No garantizamos la continuidad del servicio después de esta fecha ni la migración de datos a una posible versión comercial.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>10. Legislación Aplicable</h2>
+                <p>Estos términos se rigen por las leyes de la República de Colombia. Cualquier disputa relacionada con estos términos o con el uso del servicio se resolverá en los tribunales competentes de Medellín, Colombia.</p>
+            </div>
+            
+            <div class="contact-info">
+                <h3>Contacto</h3>
+                <p>Para preguntas sobre estos Términos de Uso, puede contactarnos a través de:</p>
+                <p><strong>Correo electrónico:</strong> soporte@mercadovive.com.co</p>
+                <p><strong>WhatsApp:</strong> +57 300 123 4567</p>
+                <p><strong>Horario de atención:</strong> Lunes a viernes, 8:00 am - 6:00 pm</p>
+            </div>
+            
+            <div class="accept-section">
+                <p>Al utilizar el sitio web MercadoVive, usted reconoce haber leído, entendido y aceptado estos Términos de Uso en su totalidad.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 MercadoVive - Proyecto Piloto Medellín</p>
+            <p>Fase Experimental MVP | Todos los derechos reservados</p>
+            <div class="footer-links">
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Preguntas Frecuentes</a>
+                <a href="#">Contáctenos</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

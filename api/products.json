@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Manzanas",
+    "categoria": "lácteos",
+    "precio": 7000,
+    "precio_anterior": 5000,
+    "imagen": "https://images.pexels.com/photos/7692899/pexels-photo-7692899.jpeg",
+    "etiqueta": "Nuevo",
+    "valoracion": 4,
+    "reseñas": 2,
+    "unidad": "und",
+    "id": "1750087131229"
+  },
+  {
+    "nombre": "Bananos",
+    "categoria": "carnes",
+    "precio": 2000,
+    "precio_anterior": 1000,
+    "imagen": "https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg",
+    "etiqueta": "Nuevo",
+    "valoracion": 3,
+    "reseñas": 2,
+    "unidad": "Kg",
+    "id": "1750091017354"
+  }
+]
