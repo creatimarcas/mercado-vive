@@ -12,7 +12,7 @@ const DATA_FILE = path.join(__dirname, 'products.json');
 const corsOptions = {
   origin: ['http://localhost:5500', 
            'http://127.0.0.1:5500',
-           'https://tu-frontend-render.onrender.com'],
+           'https://mercado-vive.onrender.com'],
 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
