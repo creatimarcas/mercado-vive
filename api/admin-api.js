@@ -8,6 +8,16 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const DATA_FILE = path.join(__dirname, 'products.json');
 
+// ⬇️ AÑADE ESTA REDIRECCIÓN JUSTO AQUÍ
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  if (host && host.startsWith('www.')) {
+    const newHost = host.replace('www.', '');
+    return res.redirect(301, `${req.protocol}://${newHost}${req.originalUrl}`);
+  }
+  next();
+});
+
 // Configuración mejorada de CORS
 const corsOptions = {
   origin: ['http://localhost:5500', 
