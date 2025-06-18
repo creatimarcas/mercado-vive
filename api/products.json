@@ -22,5 +22,17 @@
     "reseñas": 2,
     "unidad": "Kg",
     "id": "1750091017354"
+  },
+  {
+    "nombre": "Tomates",
+    "categoria": "Verduras",
+    "precio": 3200,
+    "precio_anterior": 4000,
+    "imagen": "https://images.pexels.com/photos/839725/pexels-photo-839725.jpeg",
+    "etiqueta": "Popular",
+    "valoracion": 5,
+    "reseñas": 18,
+    "unidad": "Kg",
+    "id": "p003"
   }
 ]
