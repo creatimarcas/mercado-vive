@@ -1632,14 +1632,15 @@
             </div>
             
             <div class="products-filter">
-                <button class="filter-btn active" data-filter="todos">Todos</button>
-                <button class="filter-btn" data-filter="frutas">Frutas y Verduras</button>
-                <button class="filter-btn" data-filter="lácteos">Lácteos y Huevos</button>
-                <button class="filter-btn" data-filter="abarrotes">Abarrotes</button>
-                <button class="filter-btn" data-filter="carnes">Carnes</button>
-                <button class="filter-btn" data-filter="panadería">Panadería</button>
-                <button class="filter-btn" data-filter="panadería">Bolsas y desechables</button>
-            </div>
+            <button class="filter-btn active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="frutas">Frutas</button>
+            <button class="filter-btn" data-filter="verduras">Verduras</button>
+            <button class="filter-btn" data-filter="lácteos">Lácteos y Huevos</button>
+            <button class="filter-btn" data-filter="abarrotes">Abarrotes</button>
+            <button class="filter-btn" data-filter="carnes">Carnes</button>
+            <button class="filter-btn" data-filter="panadería">Panadería</button>
+            <button class="filter-btn" data-filter="bolsas">Bolsas y desechables</button>
+        </div>
             
             <!-- Contenedor de productos con indicador de carga -->
             <div class="loading-indicator" id="loadingIndicator">
@@ -2017,15 +2018,22 @@
                 }
             }
             function renderProducts() {
+                  const categoryGroups = {
+                    "frutas": ["Frutas"],
+                    "verduras": ["Verduras"],
+                    "lácteos": ["Lacteos", "Huevo"],
+                    "abarrotes": ["Abarrotes"],
+                    "carnes": ["Carnes"],
+                    "panadería": ["Panaderia"],
+                    "bolsas": ["Bolsas", "Desechables"]
+                    };
                 productsGrid.innerHTML = '';
                 
                 const filteredProducts = currentFilter === 'todos' ? 
-                    allProducts : 
-                    allProducts.filter(product => {
-                        // Normalizar categorías para comparación flexible
-                        const productCategory = product.categoria.toLowerCase();
-                        return productCategory.includes(currentFilter);
-                    });
+                allProducts : 
+                allProducts.filter(product => {
+                    return categoryGroups[currentFilter]?.includes(product.categoria);
+                });
 
                     // Mostrar mensaje si no hay productos en la categoría
                 if (filteredProducts.length === 0) {
