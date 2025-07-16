@@ -2036,12 +2036,14 @@
 
                 productsGrid.innerHTML = '';
                 
-                const filteredProducts = currentFilter === 'todos' ? 
-                    allProducts : 
-                    allProducts.filter(product => {
-                        return categoryMap[currentFilter]?.includes(product.categoria);
-                    });
-
+                const filteredProducts = currentFilter === 'todos'
+                ? allProducts
+                : allProducts.filter(product => {
+                    const prodCat = product.categoria.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                    return categoryMap[currentFilter]?.some(cat =>
+                        cat.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === prodCat
+                    );
+                });
                     // Mostrar mensaje si no hay productos en la categoría
                 if (filteredProducts.length === 0) {
                     productsGrid.innerHTML = `
