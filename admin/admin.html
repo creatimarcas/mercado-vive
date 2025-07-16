@@ -671,93 +671,81 @@ setTimeout(() => {
             renderProducts(filteredProducts);
         }
 
-        
-        
         async function handleFormSubmit(e) {
+            e.preventDefault(); // ✅ Detener el comportamiento por defecto
 
-            // AÑADE ESTO AL INICIO:
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-                
-                try {
-                    // ... lógica de envío ...
-                } catch (error) {
-                    // ... manejo de errores ...
-                } finally {
-                    // AÑADE ESTO AL FINAL:
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
-                }
+            // Estado de envío
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            // 🟢 Si NO estamos editando, limpiar el campo oculto del ID
+            if (!editingProductId) {
+                productIdInput.value = '';
             }
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const productId = formData.get('id');
-            
+
             // Validar formulario
             let isValid = true;
             const requiredFields = ['nombre', 'categoria', 'precio', 'imagen'];
-            
+
             requiredFields.forEach(field => {
                 const input = document.getElementById(field);
                 validateField(input);
-                
+
                 if (!input.checkValidity()) {
                     isValid = false;
                 }
             });
-            
+
             if (!isValid) {
                 showToast('Por favor complete los campos obligatorios', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
                 return;
             }
-            
+
             // Evitar múltiples envíos
             if (isSubmitting) return;
             isSubmitting = true;
-            
-            // Actualizar UI
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-            
+
             try {
-                // Recolectar datos del formulario
+                // Recolectar datos
                 const productData = {
                     nombre: document.getElementById('nombre').value.trim(),
                     categoria: document.getElementById('categoria').value,
                     precio: parseFloat(document.getElementById('precio').value),
-                    precio_anterior: document.getElementById('precio_anterior').value ? 
+                    precio_anterior: document.getElementById('precio_anterior').value ?
                         parseFloat(document.getElementById('precio_anterior').value) : null,
                     imagen: document.getElementById('imagen').value.trim(),
                     etiqueta: document.getElementById('etiqueta').value.trim() || '',
-                    valoracion: document.getElementById('valoracion').value ? 
+                    valoracion: document.getElementById('valoracion').value ?
                         parseFloat(document.getElementById('valoracion').value) : 4.5,
-                    reseñas: document.getElementById('reseñas').value ? 
+                    reseñas: document.getElementById('reseñas').value ?
                         parseInt(document.getElementById('reseñas').value) : 10,
                     unidad: document.getElementById('unidad').value.trim() || ''
                 };
-                
-                let response;
+
+                // Enviar al backend
                 const method = editingProductId ? 'PUT' : 'POST';
                 const url = editingProductId ? `${API_URL}/${editingProductId}` : API_URL;
-                
-                // Configurar headers
+
                 const headers = {
                     ...getAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
-                
-                response = await fetch(url, {
+
+                const response = await fetch(url, {
                     method: method,
                     headers: headers,
                     body: JSON.stringify(productData)
                 });
-                
+
+                // Manejar sesión expirada
                 if (response.status === 401) {
                     sessionStorage.removeItem('auth');
                     window.location.href = 'login.html';
                     return;
                 }
-                
+
                 if (!response.ok) {
                     let errorMsg = `Error ${response.status}`;
                     try {
@@ -769,23 +757,33 @@ setTimeout(() => {
                     }
                     throw new Error(errorMsg);
                 }
-                
+
+                // 🟢 Al guardar exitosamente:
                 resetForm();
                 await loadProducts();
-                
-                // Feedback visual
+
+                // 🧼 Limpiar estado de edición
+                productIdInput.value = '';
+                editingProductId = null;
+                formTitle.textContent = 'Añadir Nuevo Producto';
+                cancelEditBtn.style.display = 'none';
+
+                // ✅ Mostrar mensaje
                 showToast('Producto guardado correctamente', 'success');
-                
+
             } catch (error) {
                 console.error('Error:', error);
                 showToast(`Error: ${error.message}`, 'error');
+
             } finally {
-                // Restaurar estado
+                // Restaurar botón
                 isSubmitting = false;
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
             }
+        }
         
+       
         // Función para editar producto
         async function editProduct(id) {
             // Buscar el producto en la lista actual
