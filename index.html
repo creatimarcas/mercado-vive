@@ -2021,25 +2021,26 @@
             }
                 function renderProducts() {
             // Mapeo de categorías backend -> frontend
-            const categoryMap = {
-                "frutas": ["Frutas"],
-                "verduras": ["Verduras"],
-                "lacteos": ["Lacteos"],
-                "huevos": ["Huevo"],
-                "abarrotes": ["Abarrotes"],
-                "carnes": ["Carnes"],
-                "panaderia": ["Panaderia"],
-                "bolsas": ["Bolsas"],
-                "desechables": ["Desechables"]
-            };
+                     // Mapeo de categorías backend -> frontend
+                const categoryMap = {
+                    "frutas": ["Frutas"],
+                    "verduras": ["Verduras"],
+                    "lacteos": ["Lacteos"],
+                    "huevos": ["Huevo"],  // Ahora busca "Huevo"
+                    "abarrotes": ["Abarrotes"],
+                    "carnes": ["Carnes"],
+                    "panaderia": ["Panaderia"],
+                    "bolsas": ["Bolsas"],  // Ahora busca "Bolsas"
+                    "desechables": ["Desechables"]  // Ahora busca "Desechables"
+                };
 
-            productsGrid.innerHTML = '';
-            
-            const filteredProducts = currentFilter === 'todos' ? 
-                allProducts : 
-                allProducts.filter(product => {
-                    return categoryMap[currentFilter]?.includes(product.categoria);
-                });
+                productsGrid.innerHTML = '';
+                
+                const filteredProducts = currentFilter === 'todos' ? 
+                    allProducts : 
+                    allProducts.filter(product => {
+                        return categoryMap[currentFilter]?.includes(product.categoria);
+                    });
 
                     // Mostrar mensaje si no hay productos en la categoría
                 if (filteredProducts.length === 0) {

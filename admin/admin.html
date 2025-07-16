@@ -368,13 +368,13 @@
                             <option value="">Seleccionar...</option>
                             <option value="Frutas">Frutas</option>
                             <option value="Verduras">Verduras</option>
-                            <option value="Lacteos">Lacteos</option>
-                            <option value="Huevo">Huevos</option> <!-- Cambiado a "Huevo" -->
+                            <option value="Lacteos">Lácteos</option>
+                            <option value="Huevo">Huevos</option>  <!-- Cambiado a "Huevo" -->
                             <option value="Abarrotes">Abarrotes</option>
                             <option value="Carnes">Carnes</option>
                             <option value="Panaderia">Panadería</option>
-                            <option value="Bolsas">Bolsas</option> <!-- Cambiado a "Bolsas" -->
-                            <option value="Desechables">Desechables</option> <!-- Cambiado a "Desechables" -->
+                            <option value="Bolsas">Bolsas</option>  <!-- Cambiado a "Bolsas" -->
+                            <option value="Desechables">Desechables</option>  <!-- Cambiado a "Desechables" -->
                         </select>
                         <div class="invalid-feedback">Por favor selecciona una categoría</div>
                     </div>
@@ -670,8 +670,25 @@ setTimeout(() => {
             
             renderProducts(filteredProducts);
         }
+
+        
         
         async function handleFormSubmit(e) {
+
+            // AÑADE ESTO AL INICIO:
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                
+                try {
+                    // ... lógica de envío ...
+                } catch (error) {
+                    // ... manejo de errores ...
+                } finally {
+                    // AÑADE ESTO AL FINAL:
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+                }
+            }
             e.preventDefault();
             const formData = new FormData(e.target);
             const productId = formData.get('id');
@@ -768,7 +785,6 @@ setTimeout(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
             }
-        }
         
         // Función para editar producto
         async function editProduct(id) {

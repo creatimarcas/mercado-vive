@@ -53,6 +53,17 @@ function loadProducts() {
     console.error("Error loading products:", err);
     return [];
   }
+
+  // AÑADE ESTA VALIDACIÓN:
+    const ids = new Set();
+    products.forEach(product => {
+        if (ids.has(product.id)) {
+            console.warn(`⚠️ ID duplicado detectado: ${product.id}`);
+        }
+        ids.add(product.id);
+    });
+    
+    return products;
 }
 
 function saveProducts(products) {
@@ -177,7 +188,7 @@ app.post('/api/products', authenticate, (req, res) => {
 
   try {
     const products = loadProducts();
-    newProduct.id = Date.now().toString();
+    newProduct.id = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     products.push(newProduct);
     saveProducts(products);
     
