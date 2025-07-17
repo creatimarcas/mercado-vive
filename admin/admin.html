@@ -327,6 +327,17 @@
             display: none;
         }
     </style>
+
+  <style>
+    .fade-out {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+  </style>
 </head>
 <body>
     <script>
@@ -390,12 +401,36 @@
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="imagen">URL de la Imagen *</label>
-                        <input type="url" id="imagen" class="form-control" required>
-                        <div class="invalid-feedback">URL de imagen inválida</div>
-                    </div>
+                
+<div class="form-row">
+  <div class="form-group">
+    <label for="imagenArchivo">Imagen del Producto *</label>
+    <input type="file" id="imagenArchivo" class="form-control" accept="image/*" required>
+    <small style="display: block; margin-top: 5px; font-size: 0.85rem; color: #7f8c8d;">
+      <i class="fas fa-info-circle"></i>
+      Solo imágenes. Tamaño máximo permitido: <strong>2 MB</strong>.
+    </small>
+
+    <img id="previewImagen" src="https://via.placeholder.com/100?text=Previsualización"
+         alt="Previsualización" class="product-img"
+         style="margin-top: 10px; max-width: 100px; display: none;" />
+
+    <p id="fileSizeInfo" style="font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; display: none;">
+      Tamaño: <span id="fileSizeText">0 KB</span>
+    </p>
+
+    <div id="progressContainer" style="display: none; margin-top: 10px;">
+      <div style="background: #e0e0e0; border-radius: 5px; overflow: hidden; height: 10px;">
+        <div id="progressBar" style="width: 0%; height: 100%; background: #2ecc71;"></div>
+      </div>
+      <div id="progressStatus" style="font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; display: flex; align-items: center; gap: 5px;">
+        <span id="progressText">Subiendo imagen...</span>
+        <span id="progressCheck" style="display: none; color: #27ae60; font-size: 1rem;">✅</span>
+      </div>
+    </div>
+  </div>
+</div>
+
                     
                     <div class="form-group">
                         <label for="etiqueta">Etiqueta (Opcional)</label>
@@ -669,116 +704,99 @@ setTimeout(() => {
         }
 
         async function handleFormSubmit(e) {
-            e.preventDefault(); // ✅ Detener el comportamiento por defecto
+            e.preventDefault();
 
-            // Estado de envío
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            const nombre = document.getElementById("nombre").value.trim();
+            const descripcion = document.getElementById("descripcion").value.trim();
+            const categoria = document.getElementById("categoria").value.trim();
+            const precio = parseFloat(document.getElementById("precio").value.trim());
+            const archivo = document.getElementById("imagenArchivo").files[0];
 
-            // 🟢 Si NO estamos editando, limpiar el campo oculto del ID
-            if (!editingProductId) {
-                productIdInput.value = '';
-            }
-
-            // Validar formulario
-            let isValid = true;
-            const requiredFields = ['nombre', 'categoria', 'precio', 'imagen'];
-
-            requiredFields.forEach(field => {
-                const input = document.getElementById(field);
-                validateField(input);
-
-                if (!input.checkValidity()) {
-                    isValid = false;
-                }
-            });
-
-            if (!isValid) {
-                showToast('Por favor complete los campos obligatorios', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+            if (!nombre || !descripcion || !categoria || isNaN(precio) || !archivo) {
+                showToast("Todos los campos son obligatorios", "error");
                 return;
             }
 
-            // Evitar múltiples envíos
-            if (isSubmitting) return;
-            isSubmitting = true;
-
             try {
-                // Recolectar datos
-                const productData = {
-                    nombre: document.getElementById('nombre').value.trim(),
-                    categoria: document.getElementById('categoria').value,
-                    precio: parseFloat(document.getElementById('precio').value),
-                    precio_anterior: document.getElementById('precio_anterior').value ?
-                        parseFloat(document.getElementById('precio_anterior').value) : null,
-                    imagen: document.getElementById('imagen').value.trim(),
-                    etiqueta: document.getElementById('etiqueta').value.trim() || '',
-                    valoracion: document.getElementById('valoracion').value ?
-                        parseFloat(document.getElementById('valoracion').value) : 4.5,
-                    reseñas: document.getElementById('reseñas').value ?
-                        parseInt(document.getElementById('reseñas').value) : 10,
-                    unidad: document.getElementById('unidad').value.trim() || ''
-                };
+                // Subida de imagen con XMLHttpRequest
+                const formData = new FormData();
+                formData.append('imagen', archivo);
 
-                // Enviar al backend
-                const method = editingProductId ? 'PUT' : 'POST';
-                const url = editingProductId ? `${API_URL}/${editingProductId}` : API_URL;
+                const uploadURL = `${API_URL.replace('/api/products', '/api/upload')}`;
+                const xhr = new XMLHttpRequest();
 
-                const headers = {
-                    ...getAuthHeaders(),
-                    'Content-Type': 'application/json'
-                };
+                const uploadPromise = new Promise((resolve, reject) => {
+                xhr.open('POST', uploadURL, true);
 
-                const response = await fetch(url, {
-                    method: method,
-                    headers: headers,
-                    body: JSON.stringify(productData)
+                const headers = getAuthHeaders();
+                if (headers.Authorization) {
+                    xhr.setRequestHeader('Authorization', headers.Authorization);
+                }
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressContainer.style.display = 'block';
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = `Subiendo imagen... ${percent}%`;
+                    }
                 });
 
-                // Manejar sesión expirada
-                if (response.status === 401) {
-                    sessionStorage.removeItem('auth');
-                    window.location.href = 'login.html';
-                    return;
-                }
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                    const result = JSON.parse(xhr.responseText);
+                    progressBar.style.width = '100%';
+                    progressText.textContent = 'Imagen subida correctamente';
+                    progressCheck.style.display = 'inline';
 
-                if (!response.ok) {
-                    let errorMsg = `Error ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        errorMsg = errorData.error || errorData.details || errorMsg;
-                    } catch (e) {
-                        const text = await response.text();
-                        errorMsg = text || errorMsg;
+                    setTimeout(() => {
+                        progressCheck.classList.add('fade-out');
+                    }, 2000);
+
+                    resolve(result);
+                    } else {
+                    reject(new Error(`Error al subir la imagen (${xhr.status})`));
                     }
-                    throw new Error(errorMsg);
-                }
+                };
 
-                // 🟢 Al guardar exitosamente:
-                resetForm();
-                await loadProducts();
+                xhr.onerror = () => reject(new Error('Error de red al subir la imagen'));
+                xhr.send(formData);
+                });
 
-                // 🧼 Limpiar estado de edición
-                productIdInput.value = '';
-                editingProductId = null;
-                formTitle.textContent = 'Añadir Nuevo Producto';
-                cancelEditBtn.style.display = 'none';
+                const { imageUrl } = await uploadPromise;
 
-                // ✅ Mostrar mensaje
-                showToast('Producto guardado correctamente', 'success');
+                const nuevoProducto = {
+                nombre,
+                descripcion,
+                categoria,
+                precio,
+                imagen: imageUrl
+                };
 
-            } catch (error) {
-                console.error('Error:', error);
-                showToast(`Error: ${error.message}`, 'error');
+                const res = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    ...getAuthHeaders(),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(nuevoProducto)
+                });
 
+                if (!res.ok) throw new Error("Error al crear producto");
+
+                showToast("Producto creado exitosamente", "success");
+                await obtenerProductos();
+                form.reset();
+                resetImageFields(); // limpia vista previa, barra y check
+                cerrarModal();
+            } catch (err) {
+                console.error(err);
+                showToast(err.message, "error");
             } finally {
-                // Restaurar botón
-                isSubmitting = false;
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+                resetImageFields(); // asegura limpieza total al final
             }
-        }
+            }
+
         
        
         // Función para editar producto
@@ -911,5 +929,70 @@ setTimeout(() => {
             window.location.href = 'login.html';
         }
     </script>
+
+<script>
+  const imagenInput = document.getElementById('imagenArchivo');
+  const previewImg = document.getElementById('previewImagen');
+  const fileSizeInfo = document.getElementById('fileSizeInfo');
+  const fileSizeText = document.getElementById('fileSizeText');
+  const progressContainer = document.getElementById('progressContainer');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const progressCheck = document.getElementById('progressCheck');
+
+  imagenInput.addEventListener('change', () => {
+    const file = imagenInput.files[0];
+    const MAX_FILE_SIZE_MB = 2;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+    if (!file) {
+      previewImg.style.display = 'none';
+      fileSizeInfo.style.display = 'none';
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      showToast("El archivo debe ser una imagen válida", "error");
+      imagenInput.value = "";
+      previewImg.style.display = 'none';
+      fileSizeInfo.style.display = 'none';
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      showToast(`La imagen no debe superar los ${MAX_FILE_SIZE_MB} MB`, "error");
+      imagenInput.value = "";
+      previewImg.style.display = 'none';
+      fileSizeInfo.style.display = 'none';
+      return;
+    }
+
+    const sizeInKB = file.size / 1024;
+    const sizeText = sizeInKB > 1024
+      ? `${(sizeInKB / 1024).toFixed(2)} MB`
+      : `${sizeInKB.toFixed(1)} KB`;
+    fileSizeText.textContent = sizeText;
+    fileSizeInfo.style.display = 'block';
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      previewImg.src = reader.result;
+      previewImg.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function resetImageFields() {
+    previewImg.style.display = 'none';
+    fileSizeInfo.style.display = 'none';
+    fileSizeText.textContent = '';
+    progressContainer.style.display = 'none';
+    progressBar.style.width = '0%';
+    progressText.textContent = '';
+    progressCheck.style.display = 'none';
+    progressCheck.classList.remove('fade-out');
+  }
+</script>
+
 </body>
 </html>

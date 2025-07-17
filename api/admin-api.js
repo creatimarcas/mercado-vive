@@ -1,4 +1,44 @@
 const express = require('express');
+const fs = require('fs');
+const fsPromises = require('fs/promises');
+const path = require('path');
+
+const uploadDir = path.join(__dirname, 'uploads');
+
+// Crear carpeta 'uploads' si no existe
+fsPromises.mkdir(uploadDir, { recursive: true })
+  .then(() => {
+    console.log('✅ Carpeta "uploads/" lista');
+  })
+  .catch(err => {
+    console.error('❌ Error al crear la carpeta "uploads/":', err);
+    process.exit(1);
+  });
+
+const multer = require('multer');
+const path = require('path');
+
+// Configuración de almacenamiento
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
+// Validación de tipo y tamaño
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Solo se permiten archivos de imagen'));
+    }
+    cb(null, true);
+  }
+});
+
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -326,3 +366,26 @@ app.listen(PORT, () => {
     }
   }
 });
+// Ruta para subir imágenes
+app.post('/api/upload', authenticate, (req, res) => {
+  upload.single('imagen')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'La imagen excede el tamaño máximo de 2 MB' });
+      }
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió ninguna imagen' });
+    }
+
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.json({ imageUrl });
+  });
+});
+
+// Servir archivos estáticos de la carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
