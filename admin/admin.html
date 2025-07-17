@@ -994,5 +994,82 @@ setTimeout(() => {
   }
 </script>
 
+
+<script>
+document.getElementById('guardarProductoBtn').addEventListener('click', async function (e) {
+  e.preventDefault();
+
+  const nombre = document.getElementById('nombre').value.trim();
+  const descripcion = document.getElementById('descripcion').value.trim();
+  const categoria = document.getElementById('categoria').value.trim();
+  const precio = parseFloat(document.getElementById('precio').value);
+  const imagenInput = document.getElementById('imagen');
+  const imagenArchivo = imagenInput.files?.[0];
+
+  if (!nombre || !categoria || isNaN(precio) || precio <= 0) {
+    alert('Completa los campos requeridos correctamente');
+    return;
+  }
+
+  let imageUrl = '';
+  if (imagenArchivo) {
+    const formData = new FormData();
+    formData.append('imagen', imagenArchivo);
+
+    try {
+      const resUpload = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + btoa(`${localStorage.getItem('usuario')}:${localStorage.getItem('clave')}`)
+        },
+        body: formData
+      });
+
+      const uploadData = await resUpload.json();
+      if (!resUpload.ok) {
+        alert(uploadData.error || 'Error subiendo imagen');
+        return;
+      }
+
+      imageUrl = uploadData.imageUrl;
+    } catch (error) {
+      alert('Error al subir la imagen');
+      return;
+    }
+  }
+
+  const producto = {
+    nombre,
+    descripcion,
+    categoria,
+    precio,
+    imagen: imageUrl
+  };
+
+  try {
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa(`${localStorage.getItem('usuario')}:${localStorage.getItem('clave')}`),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(producto)
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Error al guardar el producto');
+      return;
+    }
+
+    alert('Producto guardado correctamente');
+    location.reload();
+  } catch (error) {
+    console.error(error);
+    alert('Error al guardar el producto');
+  }
+});
+</script>
+
 </body>
 </html>
