@@ -284,7 +284,7 @@ app.post('/api/upload', authenticate, (req, res) => {
   });
 });
 
-// Servir imágenes
+// Servir imágenes para 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Vistas HTML
