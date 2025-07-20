@@ -335,7 +335,18 @@
     </script>
 
     <div class="container">
-        <div class="admin-header"> <!-- ... sin cambios ... --> </div>
+        <div class="admin-header"> 
+            <!-- ... sin cambios ... --> 
+             <h1 class="admin-title">
+            <i class="fas fa-tools"></i> Panel de Administración
+            </h1>
+            <div class="admin-actions">
+                <button class="btn btn-danger" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </button>
+    </div>
+        
+        </div>
 
         <div class="card">
             <h2 class="form-title" id="formTitle">Añadir Nuevo Producto</h2>
@@ -473,6 +484,9 @@ setTimeout(() => {
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+            }
 
         const API_UPLOAD = window.location.hostname.includes('localhost') ? 'http://localhost:3001/api/upload' : 'https://mercado-vive.onrender.com/api/upload';
 
