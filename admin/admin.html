@@ -450,23 +450,23 @@
         console.log("%c¡Importante!", "color: #e74c3c; font-weight: bold;");
         console.log("Este sistema es un MVP piloto. Todos los datos son temporales y serán reiniciados al finalizar la fase de pruebas.");
         // Después del mensaje de consola
-setTimeout(() => {
-    const banner = document.createElement('div');
-    banner.innerHTML = `
-        <div style="position: fixed; bottom: 20px; right: 20px; background: #fff8e1; 
-                    border-left: 4px solid #f39c12; padding: 15px; border-radius: 8px;
-                    max-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10000;">
-            <p style="margin: 0; font-weight: bold; color: #2c3e50;">
-                <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i> 
-                Sistema en fase piloto
-            </p>
-            <p style="margin: 8px 0 0; font-size: 0.9rem;">
-                Todos los datos son temporales y serán reiniciados al finalizar la prueba
-            </p>
-        </div>
-    `;
-    document.body.appendChild(banner);
-}, 3000);
+// setTimeout(() => {
+//     const banner = document.createElement('div');
+//     banner.innerHTML = `
+//         <div style="position: fixed; bottom: 20px; right: 20px; background: #fff8e1; 
+//                     border-left: 4px solid #f39c12; padding: 15px; border-radius: 8px;
+//                     max-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10000;">
+//             <p style="margin: 0; font-weight: bold; color: #2c3e50;">
+//                 <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i> 
+//                 Sistema en fase piloto
+//             </p>
+//             <p style="margin: 8px 0 0; font-size: 0.9rem;">
+//                 Todos los datos son temporales y serán reiniciados al finalizar la prueba
+//             </p>
+//         </div>
+//     `;
+//     document.body.appendChild(banner);
+// }, 3000);
         // Configuración
         const API_URL =  window.location.hostname === 'localhost' 
             ? 'http://localhost:3001/api/products'
