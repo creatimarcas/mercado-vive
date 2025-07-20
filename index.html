@@ -1990,8 +1990,8 @@
                     
                     // URL del backend - compatible con desarrollo y producción
                     const apiUrl = window.location.hostname === 'localhost' 
-                        ? 'http://localhost:3001/api/products'
-                        : 'https://mercado-vive.onrender.com/api/products';
+                    ? 'http://localhost:3001/api/products?nocache=' + Date.now()
+                    : 'https://mercado-vive.onrender.com/api/products?nocache=' + Date.now();
                         
                     const response = await fetch(apiUrl);
                     
@@ -2002,7 +2002,8 @@
                     const data = await response.json();
                     
                     loadingIndicator.style.display = 'none';
-                    allProducts = data;
+                    allProducts = Array.isArray(data) ? data : [];
+                    visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
                     renderProducts();
                     
                     productsGrid.style.display = 'grid';

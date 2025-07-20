@@ -620,9 +620,10 @@ setTimeout(() => {
                     </div>
                 `;
                 
-                const response = await fetch(API_URL, {
-                    headers: getAuthHeaders()
-                });
+               const response = await fetch(API_URL + '?nocache=' + Date.now(), {  // Evitar cache
+                headers: getAuthHeaders(),
+                cache: 'no-store'
+            });
                 
                 if (response.status === 401) {
                     sessionStorage.removeItem('auth');
@@ -642,7 +643,9 @@ setTimeout(() => {
                     throw new Error(errorMsg);
                 }
                 
-                allProducts = await response.json();
+                const data = await response.json();
+                allProducts = Array.isArray(data) ? data : []; // Asegurar que sea array
+
                 renderProducts();
                 
             } catch (error) {
