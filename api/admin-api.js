@@ -75,24 +75,31 @@ app.options('*', cors(corsOptions));
 // Funciones helper
 function loadProducts() {
   try {
+    // Si no existe, lo crea con un arreglo vacío
     if (!fs.existsSync(DATA_FILE)) {
-      fs.writeFileSync(DATA_FILE, '[]');
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+    }
+
+    const data = fs.readFileSync(DATA_FILE, 'utf8').trim();
+
+    // Si está vacío, forzamos un arreglo vacío
+    if (!data) {
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
       return [];
     }
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
+
     const products = JSON.parse(data);
 
-    const ids = new Set();
-    products.forEach(product => {
-      if (ids.has(product.id)) {
-        console.warn(`⚠️ ID duplicado detectado: ${product.id}`);
-      }
-      ids.add(product.id);
-    });
+    if (!Array.isArray(products)) {
+      console.warn('⚠️ El contenido de products.json no es un arreglo. Se reinicia.');
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+      return [];
+    }
 
     return products;
   } catch (err) {
-    console.error("Error loading products:", err);
+    console.error("❌ Error cargando productos:", err.message);
+    fs.writeFileSync(DATA_FILE, '[]', 'utf8');
     return [];
   }
 }
@@ -322,6 +329,41 @@ app.use((err, req, res, next) => {
   console.error('Error no manejado:', err);
   res.status(500).json({ error: 'Error interno del servidor' });
 });
+
+function verificarProductsJson() {
+  try {
+    if (!fs.existsSync(DATA_FILE)) {
+      console.warn('🛠️ products.json no existe. Se crea automáticamente.');
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+      return;
+    }
+
+    const contenido = fs.readFileSync(DATA_FILE, 'utf8').trim();
+
+    if (!contenido) {
+      console.warn('🟡 products.json está vacío. Se reinicia.');
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+      return;
+    }
+
+    const datos = JSON.parse(contenido);
+
+    if (!Array.isArray(datos)) {
+      console.warn('🔴 products.json no es un arreglo. Se reinicia.');
+      fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+    }
+  } catch (error) {
+    console.error('❌ Error al verificar products.json:', error.message);
+    fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+  }
+}
+
+// Ejecutar al iniciar
+verificarProductsJson();
+
+// Ejecutar cada minuto (60.000 ms)
+setInterval(verificarProductsJson, 60 * 1000);
+
 
 // Iniciar servidor
 app.listen(PORT, () => {
