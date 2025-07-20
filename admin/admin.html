@@ -556,7 +556,44 @@ setTimeout(() => {
         });
         
         // Iniciar
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+
+        // Agrega los event listeners solo después de que el DOM está cargado
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+
+        const cancelEditBtn = document.getElementById('cancelEdit');
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', cancelEdit);
+        }
+
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', loadProducts);
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        if (searchInput && searchBtn) {
+            searchInput.addEventListener('input', handleSearch);
+            searchBtn.addEventListener('click', handleSearch);
+        }
+
+        // Validación en tiempo real
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function () {
+                validateField(this);
+            });
+
+            input.addEventListener('blur', function () {
+                validateField(this);
+            });
+        });
+    });
         
         // Función para validar campos
         function validateField(field) {
