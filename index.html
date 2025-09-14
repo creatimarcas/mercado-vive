@@ -1989,65 +1989,72 @@
 
             // ================= NUEVAS FUNCIONES PARA GESTIÓN DINÁMICA =================
                 async function fetchProducts() {
-                try {
-                    // (si tu index.html ya define estas variables en otra parte, se usarán)
-                    loadingIndicator.style.display = 'block';
-                    productsGrid.style.display = 'none';
-                    errorMessage.style.display = 'none';
-                    paginationContainer.style.display = 'none';
+                    try {
+                        loadingIndicator.style.display = 'block';
+                        productsGrid.style.display = 'none';
+                        errorMessage.style.display = 'none';
+                        paginationContainer.style.display = 'none';
 
-                    // Si estás probando localmente y quieres seguir usando tu API Node en localhost:
-                    if (window.location.hostname === 'localhost') {
-                        const apiUrlLocal = 'http://localhost:3001/api/products?nocache=' + Date.now();
-                        const responseLocal = await fetch(apiUrlLocal);
-                        if (!responseLocal.ok) throw new Error(`Error HTTP: ${responseLocal.status}`);
-                        const dataLocal = await responseLocal.json();
+                        // Si estás en localhost, seguir usando API Node
+                        if (window.location.hostname === 'localhost') {
+                            const apiUrlLocal = 'http://localhost:3001/api/products?nocache=' + Date.now();
+                            const responseLocal = await fetch(apiUrlLocal);
+                            if (!responseLocal.ok) throw new Error(`Error HTTP: ${responseLocal.status}`);
+                            const dataLocal = await responseLocal.json();
+                            loadingIndicator.style.display = 'none';
+                            allProducts = Array.isArray(dataLocal) ? dataLocal : [];
+                            visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
+                            renderProducts();
+                            productsGrid.style.display = 'grid';
+                            return;
+                        }
+
+                        // PRODUCCIÓN: consumir WooCommerce REST API
+                        const apiUrl = `${WC_SITE}/wp-json/wc/v3/products?per_page=100&consumer_key=${WC_CK}&consumer_secret=${WC_CS}`;
+                        const response = await fetch(apiUrl);
+                        if (!response.ok) {
+                            throw new Error(`Error HTTP: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        const wcArray = Array.isArray(data) ? data : [];
+
+                        // Mapear WooCommerce -> formato de tu frontend
+                        const mapped = wcArray.map(p => {
+                            // Buscar atributo "Unidad"
+                            let unidad = "unid";
+                            if (p.attributes && p.attributes.length > 0) {
+                                const unidadAttr = p.attributes.find(attr => attr.name.toLowerCase() === "unidad");
+                                if (unidadAttr && unidadAttr.options && unidadAttr.options.length > 0) {
+                                    unidad = unidadAttr.options[0];
+                                }
+                            }
+
+                            return {
+                                id: String(p.id),
+                                nombre: p.name || '',
+                                precio: p.price ? parseFloat(p.price) : 0,
+                                precio_anterior: p.regular_price ? parseFloat(p.regular_price) : null,
+                                imagen: (p.images && p.images[0] && p.images[0].src) || 'https://via.placeholder.com/600x400?text=Sin+imagen',
+                                categoria: (p.categories && p.categories[0] && p.categories[0].name) || 'General',
+                                etiqueta: p.featured ? 'Destacado' : (p.on_sale ? 'Oferta' : ''),
+                                valoracion: p.average_rating ? parseFloat(p.average_rating) : 0,
+                                reseñas: p.rating_count || 0,
+                                unidad: unidad
+                            };
+                        });
+
                         loadingIndicator.style.display = 'none';
-                        allProducts = Array.isArray(dataLocal) ? dataLocal : [];
+                        allProducts = mapped;
                         visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
                         renderProducts();
                         productsGrid.style.display = 'grid';
-                        return;
+
+                    } catch (error) {
+                        console.error('Error al cargar productos:', error);
+                        loadingIndicator.style.display = 'none';
+                        errorMessage.style.display = 'block';
                     }
-
-                    // PRODUCCIÓN: consumir WooCommerce REST API
-                    const apiUrl = `${WC_SITE}/wp-json/wc/v3/products?per_page=100&consumer_key=${WC_CK}&consumer_secret=${WC_CS}`;
-                    const response = await fetch(apiUrl);
-
-                    if (!response.ok) {
-                        // 401 -> claves inválidas / 403 -> algo bloqueó; lo revisamos en pruebas
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    const wcArray = Array.isArray(data) ? data : [];
-
-                    // Mapear WooCommerce -> formato que usa tu frontend
-                    const mapped = wcArray.map(p => ({
-                        id: String(p.id),
-                        nombre: p.name || '',
-                        precio: p.price ? parseFloat(p.price) : 0,
-                        precio_anterior: p.regular_price ? parseFloat(p.regular_price) : null,
-                        imagen: (p.images && p.images[0] && p.images[0].src) || 'https://via.placeholder.com/600x400?text=Sin+imagen',
-                        categoria: (p.categories && p.categories[0] && p.categories[0].name) || 'General',
-                        etiqueta: p.featured ? 'Destacado' : (p.on_sale ? 'Oferta' : ''),
-                        valoracion: p.average_rating ? parseFloat(p.average_rating) : 0,
-                        reseñas: p.rating_count || 0,
-                        unidad: 'und'
-                    }));
-
-                    loadingIndicator.style.display = 'none';
-                    allProducts = mapped;
-                    visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
-                    renderProducts();         // usa la misma función de render que ya tenía el archivo
-                    productsGrid.style.display = 'grid';
-
-                } catch (error) {
-                    console.error('Error al cargar productos:', error);
-                    loadingIndicator.style.display = 'none';
-                    errorMessage.style.display = 'block';
                 }
-            }
 
                 function renderProducts() {
             // Mapeo de categorías backend -> frontend
