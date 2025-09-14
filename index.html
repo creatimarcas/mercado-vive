@@ -2023,7 +2023,9 @@
                             // Buscar atributo "Unidad"
                             let unidad = "unid";
                             if (p.attributes && p.attributes.length > 0) {
-                                const unidadAttr = p.attributes.find(attr => attr.name.toLowerCase() === "unidad");
+                                const unidadAttr = p.attributes.find(attr =>
+                                    attr.name.toLowerCase().includes("unidad")
+                                );
                                 if (unidadAttr && unidadAttr.options && unidadAttr.options.length > 0) {
                                     unidad = unidadAttr.options[0];
                                 }
