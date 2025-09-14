@@ -1975,39 +1975,73 @@
             const retryButton = document.getElementById('retryButton');
             const paginationContainer = document.getElementById('paginationContainer');
             const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+            // ---------- CONFIGURACIÓN WOOCOMMERCE ----------
+            const WC_SITE = "https://mercadovive.com"; // sin / al final, sin ; dentro         
+            const WC_CK   = "ck_e6fb58f27567ccef695b1d0c00322a906c3a2d31";          // ← pega aquí tu Consumer Key (ck_...)
+            const WC_CS   = "cs_94f886d33cfe5cc38a6f9a7d3f5f3d0c12b9acbe";       // ← pega aquí tu Consumer Secret (cs_...)
+// ------------------------------------------------
+
             
             let allProducts = [];
             let visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
             let currentFilter = 'todos';
 
             // ================= NUEVAS FUNCIONES PARA GESTIÓN DINÁMICA =================
-            async function fetchProducts() {
+             async function fetchProducts() {
                 try {
+                    // (si tu index.html ya define estas variables en otra parte, se usarán)
                     loadingIndicator.style.display = 'block';
                     productsGrid.style.display = 'none';
                     errorMessage.style.display = 'none';
                     paginationContainer.style.display = 'none';
-                    
-                    // URL del backend - compatible con desarrollo y producción
-                    const apiUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3001/api/products?nocache=' + Date.now()
-                    : 'https://mercado-vive.onrender.com/api/products?nocache=' + Date.now();
-                        
+
+                    // Si estás probando localmente y quieres seguir usando tu API Node en localhost:
+                    if (window.location.hostname === 'localhost') {
+                        const apiUrlLocal = 'http://localhost:3001/api/products?nocache=' + Date.now();
+                        const responseLocal = await fetch(apiUrlLocal);
+                        if (!responseLocal.ok) throw new Error(`Error HTTP: ${responseLocal.status}`);
+                        const dataLocal = await responseLocal.json();
+                        loadingIndicator.style.display = 'none';
+                        allProducts = Array.isArray(dataLocal) ? dataLocal : [];
+                        visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
+                        renderProducts();
+                        productsGrid.style.display = 'grid';
+                        return;
+                    }
+
+                    // PRODUCCIÓN: consumir WooCommerce REST API
+                    const apiUrl = `${WC_SITE}/wp-json/wc/v3/products?per_page=100&consumer_key=${WC_CK}&consumer_secret=${WC_CS}`;
                     const response = await fetch(apiUrl);
-                    
+
                     if (!response.ok) {
+                        // 401 -> claves inválidas / 403 -> algo bloqueó; lo revisamos en pruebas
                         throw new Error(`Error HTTP: ${response.status}`);
                     }
-                    
+
                     const data = await response.json();
-                    
+                    const wcArray = Array.isArray(data) ? data : [];
+
+                    // Mapear WooCommerce -> formato que usa tu frontend
+                    const mapped = wcArray.map(p => ({
+                        id: String(p.id),
+                        nombre: p.name || '',
+                        precio: p.price ? parseFloat(p.price) : 0,
+                        precio_anterior: p.regular_price ? parseFloat(p.regular_price) : null,
+                        imagen: (p.images && p.images[0] && p.images[0].src) || 'https://via.placeholder.com/600x400?text=Sin+imagen',
+                        categoria: (p.categories && p.categories[0] && p.categories[0].name) || 'General',
+                        etiqueta: p.featured ? 'Destacado' : (p.on_sale ? 'Oferta' : ''),
+                        valoracion: p.average_rating ? parseFloat(p.average_rating) : 0,
+                        reseñas: p.rating_count || 0,
+                        unidad: 'und'
+                    }));
+
                     loadingIndicator.style.display = 'none';
-                    allProducts = Array.isArray(data) ? data : [];
+                    allProducts = mapped;
                     visibleProducts = window.innerWidth > 768 ? productsPerPageDesktop : productsPerPageMobile;
-                    renderProducts();
-                    
+                    renderProducts();         // usa la misma función de render que ya tenía el archivo
                     productsGrid.style.display = 'grid';
-                    
+
                 } catch (error) {
                     console.error('Error al cargar productos:', error);
                     loadingIndicator.style.display = 'none';
